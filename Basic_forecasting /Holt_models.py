@@ -86,5 +86,5 @@ if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
 
 
-__maintainer__ = "Alain Zemkoho"
-__email__ = "A.B.Zemkoho@soton.ac.uk"
+__maintainer__ = "Zhe GUAN"
+__email__ = "zg2u24@soton.ac.uk"
