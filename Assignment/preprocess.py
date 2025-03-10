@@ -80,7 +80,6 @@ def main(args):
     ax[2].xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
     ax[2].legend()
 
-
     #ET12 data preprocessing
     ET12 = ET12[5:].rename(columns= {'Month':"Date",
                                      'Unadjusted total [note 1]':"Energy Consumption"})
@@ -117,9 +116,7 @@ def main(args):
         GMAF.to_excel(writer, sheet_name='GMAF', index=False)
         ET12.to_excel(writer, sheet_name='ET12', index=False)
 
-
     return "PreProcess Done!"
-
 
 
 if __name__ == '__main__':
