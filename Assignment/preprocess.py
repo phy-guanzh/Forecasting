@@ -3,9 +3,9 @@
 Description:
 Explore data analysis for four different datasets
 including:
-1. Global Mean Surface Temperature Anomaly (MSTA) in C
+1. Global Mean Surface Temperature Anomaly (MSTA) in \u00B0C
 2. Global Monthly Atmospheric Carbon Dioxide Levels (CH4)
-3.International Passenger Survey, UK visits abroad (GMAF)
+3. International Passenger Survey, UK visits abroad (GMAF)
 4. UK Inland Monthly Energy Consumption (ET12), in million tonnes of oil equivalent.
 """
 import sys
