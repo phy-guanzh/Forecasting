@@ -22,6 +22,7 @@ def compare_SES_HES_HWES(ori_data: pd.DataFrame,
                          pred_period: int = 12):
 
     # Apply SES, HES, and HWES
+    print(SES_params.get('fit'))
     fit_SES = SimpleExpSmoothing(ori_data).fit(**SES_params.get('fit'))
     fcast_SES = fit_SES.forecast(pred_period).rename("SES")
 
@@ -35,9 +36,22 @@ def compare_SES_HES_HWES(ori_data: pd.DataFrame,
     SES_MSE = mean_squared_error(fit_SES.fittedvalues, ori_data)
     HES_MSE = mean_squared_error(fit_HES.fittedvalues, ori_data)
     HWES_MSE = mean_squared_error(fit_HWES.fittedvalues, ori_data)
-    print(f"SES MSE: {SES_MSE}, HES MSE: {HES_MSE}, HWES MSE: {HWES_MSE}")
 
-    return SES_MSE, HES_MSE, HWES_MSE
+    print('Summary of paramters and errors from each of the models:')
+    params = ['smoothing_level', 'smoothing_trend', 'damping_trend', 'initial_level', 'initial_trend']
+    results = pd.DataFrame(index=[r"alpha", r"beta", r"phi", r"l0", r"b0", "MSE"],
+                           columns=["SES model", "HES model", "HWES model"])
+
+    results["SES model"] = [fit_SES.params[p] for p in params] + [SES_MSE]
+    results["HES model"] = [fit_HES.params[p] for p in params] + [HES_MSE]
+    results["HWES model"] = [fit_HWES.params[p] for p in params] + [HWES_MSE]
+    print(results)
+    print(ori_data)
+    forecasts = pd.concat([fcast_SES, fcast_HES, fcast_HWES], axis=1)
+    forecasts = forecasts.sort_index()
+    print(forecasts)
+
+    return results, forecasts
 
 
 def main(args):
@@ -49,8 +63,11 @@ def main(args):
     #Define model parameters
     optimize_options = {
         'SES':  True,
+        #'SES': False,
         'HES': True,
-        'HWES': True
+        #'HES': False,
+        'HWES': True,
+        #'HWES': False
     }
 
     SES_params = {'fit':{'smoothing_level': 0.2} if not optimize_options.get('SES')
@@ -59,49 +76,29 @@ def main(args):
                            'initialization_method': 'estimated'},
                   'fit':{'smoothing_level': 0.2, 'smoothing_slope': 0.1, 'damping_slope': 0.1} if not optimize_options.get('HES')
                   else {'optimized': True}}
-    HWES_params = {'model':{'trend': 'add', 'seasonal': 'add', 'seasonal_periods': 12},
-                   'fit':{'smoothing_level': 0.2, 'smoothing_slope': 0.1,
+    HWES_params = {'model':{'trend': 'add', 'seasonal': 'add', 'seasonal_periods': 12, 'damped_trend':False},
+                   'fit':{'smoothing_level': 0.9, 'smoothing_slope': 0.00001,
                        'smoothing_seasonal': 0.1, 'damping_slope': 0.1} if not optimize_options.get('HWES')
                    else {'optimized': True}}
 
+
     print(SES_params, HES_params, HWES_params)
-
-
-    # Simple_ExponentialSmoothing test
-    fit_SES = SimpleExpSmoothing(MSTA['Temperature(C)']).fit(**SES_params.get('fit'))
-
-    fcast_SES = fit_SES.forecast(50).rename("SES")
-    #print(fit_SES.summary())
-
-    # Holt's Exponential Smoothing
-    fit_HES = Holt(MSTA.loc['1970':, 'Temperature(C)'], **HES_params.get('model')).fit(**HES_params.get('fit'))
-    #fit_HES = Holt(MSTA['Temperature(C)']).fit(optimized=True)
-    fcast_HES = fit_HES.forecast(50).rename("HES")
-
-    #print(fit_HES.summary())
-
-    # Holt-Winters' Exponential Smoothing
-    fit_HWES = ExponentialSmoothing(MSTA.loc['1970':, 'Temperature(C)'], **HWES_params.get('model')).fit(**HWES_params.get('fit'))
-    #fit_HWES1 = ExponentialSmoothing(MSTA['Temperature(C)'], trend="add", seasonal="add", seasonal_periods=12).fit()
-    fcast_HWES = fit_HWES.forecast(50).rename("HWES")
-
-    print(fit_HWES.summary())
-
+    ori_data = MSTA.loc['1960':, 'Temperature(C)']
+    MSE, forecasts = compare_SES_HES_HWES(ori_data, SES_params, HES_params, HWES_params, pred_period=50)
     # plot the forecasts
-    fig, ax = plt.subplots(figsize=(12, 6))
-    MSTA['Temperature(C)'].plot(ax=ax, label="Original Series")
-    fcast_SES.plot(ax=ax, label="SES")
-    fcast_HES.plot(ax=ax, label="HES")
-    fcast_HWES.plot(ax=ax, label="HWES")
-    ax.legend(loc="upper left")
-    start_date = datetime(1990, 1, 1)
-    end_date = datetime(2040, 1, 1)
-    print(start_date, end_date)
-    plt.xlim(start_date, end_date)
-    plt.show()
+    plt.figure(figsize=(12, 6))
+    plt.plot(ori_data, label="Original Data", color="black", linestyle="--")
+    plt.plot(forecasts["SES"], label="SES Forecast: optimization = " + str(optimize_options.get('SES')))
+    plt.plot(forecasts["HES"], label="HES Forecast: optimization = " + str(optimize_options.get('HES')))
+    plt.plot(forecasts["HWES"], label="HWES Forecast: optimization = "+ str(optimize_options.get('HWES')) )
 
-    MSE = mean_squared_error(fit_HWES.fittedvalues, MSTA.loc['1970':, 'Temperature(C)'])
-    #MSE1 = mean_squared_error(fit_HWES1.fittedvalues, MSTA['Temperature(C)'])
+    plt.title("Forecast Comparison")
+    plt.xlim(datetime(1960, 1, 1), datetime(2029, 1, 1))
+    plt.xlabel("Time")
+    plt.ylabel("Value")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
     print(MSE)
 
     # Decompose the MSTA dataset

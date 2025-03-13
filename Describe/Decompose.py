@@ -6,6 +6,7 @@ import seaborn as sns
 from matplotlib.pyplot import figure
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.seasonal import seasonal_decompose
+
 # Loading data
 df_materials = pd.read_excel('BuildingMaterials.xls',index_col=0, parse_dates=True, date_format="%Y %b")[:-4].squeeze()
 df_cement = pd.read_excel('CementProduction.xls',index_col=0, parse_dates=True, date_format="%Y %b")[:-4].squeeze()
