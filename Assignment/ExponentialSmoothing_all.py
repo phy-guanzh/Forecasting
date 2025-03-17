@@ -99,7 +99,6 @@ def compare_SES_HES_HWES(ori_data: pd.DataFrame,
     hes_series = pd.concat([fit_HES.fittedvalues, fcast_HES]).rename("HES")
     hwes_series = pd.concat([fit_HWES.fittedvalues, fcast_HWES]).rename("HWES")
 
-
     forecasts = pd.concat([ses_series, hes_series, hwes_series], axis=1)
     forecasts = forecasts.sort_index()
     print(forecasts)

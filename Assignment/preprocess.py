@@ -33,7 +33,7 @@ def main(args):
 
     MSTA = MSTA.loc[:,['Date',"Temperature(C)","Lower(2.5%)","Upper(97.5%)"]]
     print(MSTA['Date'].dtype)
-    fig, ax = plt.subplots(nrows = 4, ncols = 1, figsize=(14, 16))
+    fig, ax = plt.subplots(nrows = 4, ncols = 1, figsize=(12, 14))
     sns.lineplot(x='Date', y='Temperature(C)', data=MSTA, ax=ax[0], label="Temperature")
     ax[0].fill_between(x = MSTA['Date'], y1 = MSTA["Lower(2.5%)"], y2 = MSTA["Upper(97.5%)"], alpha = 0.2, color = "green", label = "Confidence Interval" )
     ax[0].set_xlabel("")
@@ -97,9 +97,9 @@ def main(args):
     ax[3].xaxis.set_major_locator(mdates.MonthLocator( interval = 24))
     ax[3].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     #plt.setp(ax[3].get_xticklabels(), rotation = 45)
-
-    plt.savefig("plots/EDA1.pdf")
-    plt.savefig("plots/EDA1.png", dpi = 500)
+    plt.tight_layout()
+    plt.savefig("plots/Distributions_four_datasets.pdf")
+    plt.savefig("plots/Distributions_four_datasets.png", dpi = 500)
     plt.show()
 
     #store cleaned data
