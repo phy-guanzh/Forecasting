@@ -30,7 +30,6 @@ Description:
 ########################################################################
 #Importing Necessary Libraries
 ########################################################################
-
 import sys, os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -43,7 +42,6 @@ from statsmodels.tsa.api import SimpleExpSmoothing
 ########################################################################
 #Function1: compare_SES_HES_HWES() - Model Training and Evaluation
 ########################################################################
-
 def compare_SES_HES_HWES(ori_data: pd.DataFrame,
                          SES_params: dict = None,
                          HES_params: dict = None,
@@ -111,7 +109,6 @@ def compare_SES_HES_HWES(ori_data: pd.DataFrame,
 ################################################################
 # Function2: Visualization
 ################################################################
-
 def plots_series(ori_data, forecasts, optimize_options, title):
 
     #define titles for different datasets
@@ -145,7 +142,6 @@ def plots_series(ori_data, forecasts, optimize_options, title):
 ########################################################################
 # Main Function: Executing the Workflow
 ########################################################################
-
 def main(args):
 
     # Loading Data
@@ -193,8 +189,6 @@ def main(args):
     plots_series(CH4_selected, forecast_CH4, optimize_options, "CH4")
     plots_series(GMAF_selected, forecasts_GMAF, optimize_options,"GMAF")
     plots_series(ET12_selected, forecasts_ET12, optimize_options,"ET12")
-
-
 
 #Script Execution
 if __name__ == '__main__':
