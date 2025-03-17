@@ -16,7 +16,7 @@ Description:
 -- adjustments when using a multiplicative trend or seasonal component in HWES.
 --
 -- Content:
---    0. Set-up (Importing Necessary Libraries)
+--    0. Set-up: Importing Necessary Libraries
 --    1. Function1: compare_SES_HES_HWES() - Model Training and Evaluation
 --    2. Function2: Visualization
 --    3. Main Function: Executing the Workflow
