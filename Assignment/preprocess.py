@@ -8,6 +8,7 @@ including:
 3. International Passenger Survey, UK visits abroad (GMAF)
 4. UK Inland Monthly Energy Consumption (ET12), in million tonnes of oil equivalent.
 """
+
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
