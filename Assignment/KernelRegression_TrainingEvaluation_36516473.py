@@ -43,7 +43,7 @@ import numpy as np
 # 0. Data Loading and Preprocessing
 ########################################################################
 # Load aligned regression dataset
-df = pd.read_excel("regression_data.xlsx", parse_dates=["Date"], index_col="Date")
+df = pd.read_excel("./Exported_Data/regression_data.xlsx", parse_dates=["Date"], index_col="Date")
 
 # Select predictors and target
 X = df[["CH4", "GMAF", "ET12"]]  # Independent variables
@@ -103,10 +103,10 @@ y_pred_series = pd.Series(y_pred, index=X.index, name="Predicted_MSTA")
 future_index = pd.date_range(start='2023-11-01', periods=26, freq='MS')
 
 # Load forecasted CH4, GMAF, and ET12 from exponential smoothing outputs
-ch4_forecast = pd.read_excel("CH4_forecasts_smooth.xlsx", index_col=0, parse_dates=True).loc['2023-10-01':, 'HWES']
-gmaf_forecast = pd.read_excel("GMAF_forecasts_smooth.xlsx", index_col=0, parse_dates=True).loc['2023-10':, 'HWES']
-et12_forecast = pd.read_excel("ET12_forecasts_smooth.xlsx", index_col=0, parse_dates=True).loc['2023-10':, 'HWES']
-msta_forecast = pd.read_excel("MSTA_forecasts_ARIMA.xlsx", index_col=0, parse_dates=True).loc['2023-10':, 'predicted_mean']
+ch4_forecast = pd.read_excel("./Exported_Data/CH4_forecasts_smooth.xlsx", index_col=0, parse_dates=True).loc['2023-10-01':, 'HWES']
+gmaf_forecast = pd.read_excel("./Exported_Data/GMAF_forecasts_smooth.xlsx", index_col=0, parse_dates=True).loc['2023-10':, 'HWES']
+et12_forecast = pd.read_excel("./Exported_Data/ET12_forecasts_smooth.xlsx", index_col=0, parse_dates=True).loc['2023-10':, 'HWES']
+msta_forecast = pd.read_excel("./Exported_Data/MSTA_forecasts_ARIMA.xlsx", index_col=0, parse_dates=True).loc['2023-10':, 'predicted_mean']
 
 # Construct future input matrix
 X_future_raw = pd.DataFrame({

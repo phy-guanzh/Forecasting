@@ -155,7 +155,7 @@ def search_best_arima(data, p_values, d_values, q_values, n_splits=5):
 ########################################################################
 def main(args):
     # Load Dataset
-    MSTA = pd.read_excel("Data_36516473.xlsx", sheet_name=["MSTA"], parse_dates=["Date"], index_col="Date")['MSTA']['Temperature(C)']
+    MSTA = pd.read_excel("./Exported_Data/Data_36516473.xlsx", sheet_name=["MSTA"], parse_dates=["Date"], index_col="Date")['MSTA']['Temperature(C)']
 
     # Apply transformation if necessary
     if MSTA.min() <= 0:
@@ -208,7 +208,7 @@ def main(args):
     plt.show()
 
     # Export forecast
-    forecast.to_excel("MSTA_forecasts_ARIMA.xlsx")
+    forecast.to_excel("./Exported_Data/MSTA_forecasts_ARIMA.xlsx")
     return "ARIMA Forecast Done!"
 
 ########################################################################

@@ -97,7 +97,7 @@ def plot_decomposition(data, model, title):
 def main(args):
     # Load all sheets
     sheets_name = ['MSTA', "CH4", 'GMAF', "ET12"]
-    MSTA, CH4, GMAF, ET12 = pd.read_excel("Data_36516473.xlsx", sheet_name=sheets_name, parse_dates=["Date"],
+    MSTA, CH4, GMAF, ET12 = pd.read_excel("./Exported_Data/Data_36516473.xlsx", sheet_name=sheets_name, parse_dates=["Date"],
                                           index_col="Date").values()
 
     # Apply decomposition to all datasets using both models

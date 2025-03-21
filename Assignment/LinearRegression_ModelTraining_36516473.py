@@ -98,7 +98,7 @@ def main(args):
         # Load data from Excel file
         sheets_name = ['MSTA', "CH4", 'GMAF', "ET12"]
         data_dict = pd.read_excel(
-            "Data_36516473.xlsx",
+            "./Exported_Data/Data_36516473.xlsx",
             sheet_name=sheets_name,
             parse_dates=["Date"],
             index_col="Date"
@@ -120,7 +120,7 @@ def main(args):
             'ET12': ET12.loc[start_date:end_date]
         }).dropna()
 
-        aligned_data.to_excel("regression_data.xlsx")
+        aligned_data.to_excel("./Exported_Data/regression_data.xlsx")
 
         # Find optimal lags for each feature
         max_lag = 36
@@ -191,9 +191,9 @@ def main(args):
         print(comparison_df.round(3))
 
         # Save models
-        with open('model_with_lags.pkl', 'wb') as f:
+        with open('Models/model_with_lags.pkl', 'wb') as f:
             pickle.dump(model_lag, f)
-        with open('model_no_lags.pkl', 'wb') as f:
+        with open('Models/model_no_lags.pkl', 'wb') as f:
             pickle.dump(model_no_lag, f)
 
         return 0

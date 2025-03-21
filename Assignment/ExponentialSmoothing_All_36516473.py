@@ -152,7 +152,7 @@ def main(args):
 
     # Loading Data
     sheets_name = ['MSTA', "CH4",'GMAF', "ET12" ]
-    MSTA, CH4, GMAF, ET12 = pd.read_excel("Data_36516473.xlsx", sheet_name=sheets_name, parse_dates=["Date"], index_col= "Date").values()
+    MSTA, CH4, GMAF, ET12 = pd.read_excel("./Exported_Data/Data_36516473.xlsx", sheet_name=sheets_name, parse_dates=["Date"], index_col= "Date").values()
     print(MSTA.index, CH4.index, GMAF.index, ET12.index)
 
     #Define model parameters
@@ -196,10 +196,10 @@ def main(args):
     plots_series(GMAF_selected, forecasts_GMAF, optimize_options,"GMAF")
     plots_series(ET12_selected, forecasts_ET12, optimize_options,"ET12")
 
-    forecasts_MSTA.to_excel("MSTA_forecasts_smooth.xlsx")
-    forecast_CH4.to_excel("CH4_forecasts_smooth.xlsx")
-    forecasts_GMAF.to_excel("GMAF_forecasts_smooth.xlsx")
-    forecasts_ET12.to_excel("ET12_forecasts_smooth.xlsx")
+    forecasts_MSTA.to_excel("./Exported_Data/MSTA_forecasts_smooth.xlsx")
+    forecast_CH4.to_excel("./Exported_Data/CH4_forecasts_smooth.xlsx")
+    forecasts_GMAF.to_excel("./Exported_Data/GMAF_forecasts_smooth.xlsx")
+    forecasts_ET12.to_excel("./Exported_Data/ET12_forecasts_smooth.xlsx")
 
 #Script Execution
 if __name__ == '__main__':

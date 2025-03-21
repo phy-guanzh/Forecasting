@@ -134,7 +134,7 @@ def main(args):
     ####################################################################
     # Export Cleaned Data to Excel
     ####################################################################
-    filename = "./Data_36516473.xlsx"
+    filename = "./Exported_Data/Data_36516473.xlsx"
     for df in [MSTA, CH4, GMAF, ET12]:
         df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%Y-%m")
 
