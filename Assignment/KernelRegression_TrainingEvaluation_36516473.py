@@ -32,6 +32,7 @@ Description:
 """
 
 import pandas as pd
+import pickle
 from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.preprocessing import StandardScaler
@@ -86,6 +87,9 @@ print("Best Score (neg MSE):", grid_search.best_score_)
 # Fit the best model on full historical data
 best_model = grid_search.best_estimator_
 best_model.fit(X_scaled, y)
+
+with open('Models/model_with_kernel.pkl', 'wb') as f:
+    pickle.dump(best_model, f)
 
 # Evaluate model
 y_pred = best_model.predict(X_scaled)
