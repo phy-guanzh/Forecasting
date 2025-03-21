@@ -46,7 +46,7 @@ def compare_SES_HES_HWES(ori_data: pd.DataFrame,
                          SES_params: dict = None,
                          HES_params: dict = None,
                          HWES_params: dict = None,
-                         pred_period: int = 12,
+                         pred_period: int = 36,
                          title : str = None):
 
     # Apply SES, HES, and HWES
@@ -61,25 +61,32 @@ def compare_SES_HES_HWES(ori_data: pd.DataFrame,
     min_val = ori_data.min()
     ori_data_adj = ori_data.copy()
     operation = False
-    if min_val <= 0:
-        shift_value = abs(min_val) + 1
-        ori_data_adj += shift_value
-        operation = True
+    #if min_val <= 0:
+    #    shift_value = abs(min_val) + 1
+    #    ori_data_adj += shift_value
+    #    operation = True
+    #    print(pred_period,ori_data_adj)
 
     fit_HWES = ExponentialSmoothing(ori_data_adj, **HWES_params.get('model')).fit(**HWES_params.get('fit'))
     fcast_HWES = fit_HWES.forecast(pred_period).rename("HWES")
     #Fits the HWES model and applies a shift correction if necessary.
-    if operation:
-        fcast_HWES -= shift_value
+
+    #if operation:
+    #    fcast_HWES -= shift_value
+
 
     #Calculate MSE, MAE and R^2
     SES_MSE = mean_squared_error(fit_SES.fittedvalues, ori_data)
     HES_MSE = mean_squared_error(fit_HES.fittedvalues, ori_data)
     HWES_MSE = mean_squared_error(fit_HWES.fittedvalues, ori_data)
+    if operation:
+        HWES_MSE = mean_squared_error(fit_HWES.fittedvalues - shift_value, ori_data)
 
     SES_MAE = mean_absolute_error(fit_SES.fittedvalues, ori_data)
     HES_MAE = mean_absolute_error(fit_HES.fittedvalues, ori_data)
     HWES_MAE = mean_absolute_error(fit_HWES.fittedvalues, ori_data)
+    if operation:
+        HWES_MAE = mean_absolute_error(fit_HWES.fittedvalues - shift_value, ori_data)
 
     SES_R2 = r2_score(fit_SES.fittedvalues, ori_data)
     HES_R2 = r2_score(fit_HES.fittedvalues, ori_data)
@@ -119,7 +126,7 @@ def plots_series(ori_data, forecasts, optimize_options, title):
     }
 
     #Plotting Forecasts
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 14))
     plt.plot(ori_data, label="Original Data", color="black", linestyle="--")
     plt.plot(forecasts["SES"], label="SES Model: optimization = " + str(optimize_options.get('SES')))
     plt.plot(forecasts["HES"], label="HES Model: optimization = " + str(optimize_options.get('HES')))
@@ -164,7 +171,7 @@ def main(args):
                            'initialization_method': 'estimated'},
                   'fit':{'smoothing_level': 0.2, 'smoothing_slope': 0.1, 'damping_slope': 0.1} if not optimize_options.get('HES')
                   else {'optimized': True}}
-    HWES_params = {'model':{'trend': 'mul', 'seasonal': 'mul', 'seasonal_periods': 12, 'damped_trend':False},
+    HWES_params = {'model':{'trend': 'add', 'seasonal': 'add', 'seasonal_periods': 12, 'damped_trend':False},
                    'fit':{'smoothing_level': 0.9, 'smoothing_slope': 0.00001,
                        'smoothing_seasonal': 0.1, 'damping_slope': 0.1} if not optimize_options.get('HWES')
                    else {'optimized': True}}
@@ -172,15 +179,15 @@ def main(args):
 
     #select datasets
     print(SES_params, HES_params, HWES_params)
-    MSTA_selected = MSTA.loc['1960':, 'Temperature(C)']
+    MSTA_selected = MSTA.loc["1960":, 'Temperature(C)']
     CH4_selected = CH4.loc[:, 'CH4(ppb)']
     GMAF_selected = GMAF.loc[:,"Visitors(GMAF)"]
     ET12_selected = ET12.loc[:,"Energy Consumption"]
 
     #Forecasting Each Dataset
     metrics_MSTA, forecasts_MSTA = compare_SES_HES_HWES(MSTA_selected, SES_params, HES_params, HWES_params, pred_period=13, title = "MSTA")
-    metrics_CH4, forecast_CH4 = compare_SES_HES_HWES(CH4_selected, SES_params, HES_params, HWES_params, pred_period=13, title ="CH4")
-    metrics_GMAF, forecasts_GMAF = compare_SES_HES_HWES(GMAF_selected, SES_params, HES_params, HWES_params, pred_period=13,title = "GMAF")
+    metrics_CH4, forecast_CH4 = compare_SES_HES_HWES(CH4_selected, SES_params, HES_params, HWES_params, pred_period=16, title ="CH4")
+    metrics_GMAF, forecasts_GMAF = compare_SES_HES_HWES(GMAF_selected, SES_params, HES_params, HWES_params, pred_period=24,title = "GMAF")
     metrics_ET12, forecasts_ET12 = compare_SES_HES_HWES(ET12_selected, SES_params, HES_params, HWES_params, pred_period=13, title ="ET12")
 
     #Generating Plots
@@ -188,6 +195,11 @@ def main(args):
     plots_series(CH4_selected, forecast_CH4, optimize_options, "CH4")
     plots_series(GMAF_selected, forecasts_GMAF, optimize_options,"GMAF")
     plots_series(ET12_selected, forecasts_ET12, optimize_options,"ET12")
+
+    forecasts_MSTA.to_excel("MSTA_forecasts_smooth.xlsx")
+    forecast_CH4.to_excel("CH4_forecasts_smooth.xlsx")
+    forecasts_GMAF.to_excel("GMAF_forecasts_smooth.xlsx")
+    forecasts_ET12.to_excel("ET12_forecasts_smooth.xlsx")
 
 #Script Execution
 if __name__ == '__main__':
